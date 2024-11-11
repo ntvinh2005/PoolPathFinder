@@ -4,7 +4,7 @@ from PIL import Image, ImageTk
 import cv2
 import numpy as np
 from Ball_detect import detect_and_draw_rectangles
-from utility import draw_rectangle  # Assuming your utility method handles actual rectangle drawing.
+from utility import draw_rectangle 
 
 class App:
     def __init__(self, root):
@@ -18,9 +18,9 @@ class App:
         self.image = None
         self.image_tk = None
         self.rect_mode = False
-        self.rect_start = None  # Starting point for drawing rectangles
-        self.rect_end = None    # End point for drawing rectangles
-        self.rect_id = None     # Track rectangle ID for canvas
+        self.rect_start = None  
+        self.rect_end = None   
+        self.rect_id = None    
 
     def load_image(self):
         file_path = filedialog.askopenfilename()
@@ -46,8 +46,8 @@ class App:
         self.canvas.create_image(0, 0, anchor=tk.NW, image=self.image_tk)
         self.canvas.config(scrollregion=self.canvas.bbox(tk.ALL))
         self.canvas.bind("<Button-1>", self.get_click)
-        self.canvas.bind("<B1-Motion>", self.update_rectangle)  # Track mouse movement while dragging
-        self.canvas.bind("<ButtonRelease-1>", self.finalize_rectangle)  # Finalize the rectangle
+        self.canvas.bind("<B1-Motion>", self.update_rectangle)  
+        self.canvas.bind("<ButtonRelease-1>", self.finalize_rectangle)  
 
     def get_click(self, event):
         if len(self.points) < 4:
@@ -56,25 +56,24 @@ class App:
             if len(self.points) == 4:
                 self.transform_image()
         else:
-             if self.rect_start is None:  # Only start a new rectangle if one isn't being drawn
-                self.rect_start = (event.x, event.y)  # Store the start point
-                self.rect_end = self.rect_start  # Initial rectangle end point
+             if self.rect_start is None:
+                self.rect_start = (event.x, event.y) 
+                self.rect_end = self.rect_start 
                 self.rect_id = self.canvas.create_rectangle(self.rect_start[0], self.rect_start[1], self.rect_end[0], self.rect_end[1], outline="green", width=2)
 
     def update_rectangle(self, event):
-        if self.rect_start:  # Only update the rectangle if drawing mode is active
+        if self.rect_start:  
             self.rect_end = (event.x, event.y)
-            if self.rect_id:  # If a rectangle is being drawn, delete the old one
+            if self.rect_id:
                 self.canvas.delete(self.rect_id)
             self.rect_id = self.canvas.create_rectangle(self.rect_start[0], self.rect_start[1], self.rect_end[0], self.rect_end[1], outline="green", width=2)
 
     def finalize_rectangle(self, event):
         if self.rect_start:
             self.rect_end = (event.x, event.y)
-            # After mouse release, store the rectangle coordinates
             print(f"Rectangle drawn with coordinates: {self.rect_start} to {self.rect_end}")
-            self.rect_start = None  # Reset start to prevent re-drawing during another drag
-            # Optionally, do something with the rectangle (like storing coordinates)
+            self.rect_start = None  
+           
 
     def transform_image(self):
         scale_x = self.original_image.shape[1] / self.image.shape[1]
